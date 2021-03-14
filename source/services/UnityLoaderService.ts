@@ -33,12 +33,12 @@ export default class UnityLoaderService {
       }
     window
       .fetch(source)
-      .then(_response => {
+      .then((_response) => {
         if (_response.status >= 400)
           return loggingService.errorUnityLoaderNotFound(_response.status);
         _response
           .text()
-          .then(_text => {
+          .then((_text) => {
             if (_text.trim().charAt(0) === "<")
               return loggingService.errorUnityLoaderNotFound("error doc");
             this.unityLoaderScript = document.createElement("script");
@@ -46,14 +46,17 @@ export default class UnityLoaderService {
             this.unityLoaderScript.async = true;
             this.unityLoaderScript.src = source;
             this.unityLoaderScript.onload = () => {
-              if (typeof (window as any).UnityLoader === "undefined")
+              if (
+                typeof window !== "undefined" &&
+                typeof (window as any).UnityLoader === "undefined"
+              )
                 return loggingService.errorUnityLoaderNotFound();
               onLoad();
             };
             this.documentHead.appendChild(this.unityLoaderScript);
           })
-          .catch(_reason => loggingService.errorUnityLoaderNotFound(_reason));
+          .catch((_reason) => loggingService.errorUnityLoaderNotFound(_reason));
       })
-      .catch(_reason => loggingService.errorUnityLoaderNotFound(_reason));
+      .catch((_reason) => loggingService.errorUnityLoaderNotFound(_reason));
   }
 }
